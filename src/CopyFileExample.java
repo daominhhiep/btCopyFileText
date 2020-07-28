@@ -1,33 +1,31 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class CopyFileExample {
-    public static void main(String[] args) throws IOException {
-        InputStream inStream = null;
-        OutputStream outStream = null;
-
+    public void copyFile(String input, String target) {
         try {
-            inStream = new FileInputStream(new File("./txt/file1.txt"));
-            outStream = new FileOutputStream(new File("./txt/file2.txt"));
+            File file_input = new File(input);
+            File file_target = new File(target);
+            checkFile(file_input, file_target);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file_input));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file_target));
+            int line;
             int count = 0;
-            int length;
-            byte[] buffer = new byte[1024];
-
-            while ((length = inStream.read(buffer)) > 0) {
-                outStream.write(buffer, 0, length);
-                count+=length;
+            while ((line = bufferedReader.read()) != -1) {
+                bufferedWriter.write((char)line);
+                count++;
             }
-            System.out.println("File is copied successful!" );
-            System.out.println("Number of characters in file : " + count);
+            bufferedWriter.close();
+            System.out.println("Số ký tự: " + count);
         } catch (IOException e) {
-            System.err.println("Can't find file1.txt");
-        } finally {
-            inStream.close();
-            outStream.close();
+            System.err.println("Lỗi IO");
+        } catch (Exception e) {
+            System.err.println("Lỗi");
+        }
+    }
+
+    private void checkFile(File file_input, File file_target) throws FileNotFoundException {
+        if (!file_input.exists() || !file_target.exists()) {
+            throw new FileNotFoundException();
         }
     }
 }
